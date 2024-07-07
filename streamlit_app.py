@@ -36,7 +36,71 @@ df_bilangan_acak_lama = pd.DataFrame(df_bilangan_acak2)
 def SimulasiProgram(df_bilangan_acak1,df_bilangan_acak2):
     df_bilangan_acak_curah = pd.DataFrame(df_bilangan_acak1)
     df_bilangan_acak_lama = pd.DataFrame(df_bilangan_acak2)
-    Tahun = df_bilangan_acak_curah['Index'] + 1
+    Tahun = df_bilangan_acak_curah['Index'] + 2023
+    df_bilangan_acak_curah['Tahun'] = Tahun
+    df_bilangan_acak_curah['Curah Hujan'] = round(df_bilangan_acak_curah['Ui'] * 100).astype(int)
+    df_bilangan_acak_lama['Lama Hujan (Bulanan)'] = round(df_bilangan_acak_lama['Ui'] * 100).astype(int)
+    
+     # Buat kondisi dan pilihan untuk Curah Hujan
+    conditions = [
+        (df_bilangan_acak_curah['Curah Hujan'] >= 1) & (df_bilangan_acak_curah['Curah Hujan'] <= 50),
+        (df_bilangan_acak_curah['Curah Hujan'] >= 51) & (df_bilangan_acak_curah['Curah Hujan'] <= 76),
+        (df_bilangan_acak_curah['Curah Hujan'] >= 77) & (df_bilangan_acak_curah['Curah Hujan'] <= 90),
+        (df_bilangan_acak_curah['Curah Hujan'] >= 91) & (df_bilangan_acak_curah['Curah Hujan'] <= 99),
+        (df_bilangan_acak_curah['Curah Hujan'] == 100)
+    ]
+    condition1 = [
+        (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] >= 1)  & (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] <= 36),
+        (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] >= 37) & (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] <= 59),
+        (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] >= 60) & (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] <= 67),
+        (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] >= 68) & (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] <= 74),
+        (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] >= 75) & (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] <= 81),
+        (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] >= 82) & (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] <= 90),
+        (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] >= 91) & (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] <= 96),
+        (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] >= 97) & (df_bilangan_acak_lama['Lama Hujan (Bulanan)'] <= 100)
+    ]
+    
+    choices = [
+        1300,
+        1700,  
+        2500,
+        2800,
+        3000   
+    ]
+    choices1 = [
+        1,
+        2,  
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+    ]
+    df_bilangan_acak_curah['Curah Hujan (mm)'] = np.select(conditions, choices, default=0).astype(int)
+    df_bilangan_acak_lama ['Lama Hujan (Bln)'] = np.select(condition1, choices1, default=0).astype(int)
+    
+    
+    # Gabungkan kedua DataFrame berdasarkan index
+    df_bilangan_acak_curah['Lama Hujan (Bulanan)'] = df_bilangan_acak_lama['Lama Hujan (Bulanan)']
+    df_bilangan_acak_curah['Lama Hujan (Bln)'] = df_bilangan_acak_lama['Lama Hujan (Bln)']
+    df_bilangan_acak_curah['Intensitas Hujan'] = df_bilangan_acak_curah['Curah Hujan (mm)'] / df_bilangan_acak_lama['Lama Hujan (Bln)']
+    condition2 = [
+        (df_bilangan_acak_curah['Intensitas Hujan'] < 100),
+        (df_bilangan_acak_curah['Intensitas Hujan'] >= 100) & (df_bilangan_acak_curah['Intensitas Hujan']<=300),
+        (df_bilangan_acak_curah['Intensitas Hujan'] >= 301) & (df_bilangan_acak_curah['Intensitas Hujan']<=500),
+        (df_bilangan_acak_curah['Intensitas Hujan'] > 500) 
+    ]
+    choices2 = [
+        'Hujan Ringan',
+        'Hujan Sedang',
+        'Hujan Lebat',
+        'Hujan Sangat Lebat'
+    ]
+    df_bilangan_acak_curah['Status Cuaca'] = np.select(condition2,choices2,default=0)
+    df_fix = df_bilangan_acak_curah[['Tahun', 'Curah Hujan', 'Lama Hujan (Bulanan)', 'Curah Hujan (mm)','Lama Hujan (Bln)','Intensitas Hujan','Status Cuaca']]
+    
+    return df_fix
     
 
 
@@ -119,6 +183,7 @@ dfProbabilitasCurahHujan = ProbabilitasCurahHujan(DataCurahHujan, add_row=True)
 dfIntervalAngkaAcakCurahHujan = KemunculanAngkaAcakCurahHujan(DataCurahHujan, add_row=True)
 dfProbabilitasAngkaAcakLamaHujan = ProbabilitasLamaHujan(DataLamaHujan, add_row=True)
 dfIntervalAngkaAcakLamaHujan = KemunculanAngkaAcakLamaHujan(DataLamaHujan, add_row=True)
+dfSimulasi = SimulasiProgram(df_bilangan_acak1,df_bilangan_acak2)
 
 
 
@@ -131,6 +196,7 @@ LamaHujanTabelProbabilitas = dfProbabilitasAngkaAcakLamaHujan.to_html(index=Fals
 LamaHujanTabelInterval = dfIntervalAngkaAcakLamaHujan.to_html(index=False)
 TabelBilanganAcakCurahHujan = df_bilangan_acak_curah.to_html(index=False)
 TabelBilanganAcakLamaHujan = df_bilangan_acak_lama.to_html(index=False)
+TabelSimulasi = dfSimulasi.to_html(index=False)
 
 
 
@@ -138,7 +204,7 @@ TabelBilanganAcakLamaHujan = df_bilangan_acak_lama.to_html(index=False)
 # Main function
 def main():
     st.sidebar.title("Model Dan Simulasi")
-    selected_tab = st.sidebar.radio("Menu", ["Tabel Frekuensi, Probabilitas, dan Interval Angka Acak","Tabel Bilangan Acak"])
+    selected_tab = st.sidebar.radio("Menu", ["Tabel Frekuensi, Probabilitas, dan Interval Angka Acak","Tabel Bilangan Acak","Simulasi"])
 
     
     if selected_tab == "Tabel Frekuensi, Probabilitas, dan Interval Angka Acak":
@@ -171,7 +237,7 @@ def main():
 
         st.subheader("Interval Angka Acak Lama Hujan (Bulanan):")
         st.write(LamaHujanTabelInterval, unsafe_allow_html=True)
-    if selected_tab == "Tabel Bilangan Acak":
+    elif selected_tab == "Tabel Bilangan Acak":
         st.title("Tabel Bilangan Acak")
         st.write("")
 
@@ -181,8 +247,13 @@ def main():
 
         st.write("")
 
-        st.subheader("Bilangan Acak Curah Hujan:")
+        st.subheader("Bilangan Lama Hujan (Bulanan):")
         st.write(TabelBilanganAcakLamaHujan, unsafe_allow_html=True)
+    elif selected_tab == "Simulasi":
+        st.title("Simulasi")
+        st.write("")
+        st.subheader("Simulasi Curah Hujan Tahunan:")
+        st.write(TabelSimulasi, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

@@ -2,3 +2,6 @@ streamlit
 pandas
 openpyxl
 numpy
+streamlit_cookies_controller
+streamlit_local_storage
+importlib

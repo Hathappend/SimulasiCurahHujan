@@ -254,6 +254,3 @@ def main():
         st.write("")
         st.subheader("Simulasi Curah Hujan Tahunan:")
         st.write(TabelSimulasi, unsafe_allow_html=True)
-
-if __name__ == "__main__":
-    main()

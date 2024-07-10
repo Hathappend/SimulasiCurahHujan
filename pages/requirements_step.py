@@ -61,7 +61,10 @@ def save(frequency_tables):
 
 # Fungsi untuk mengambil data
 def getData(cookie_name):
-    return controller.get(cookie_name)
+    get = controller.get(cookie_name)
+    if get:
+        return get
+    return None
 
 def show(data, show_type):
     columns = st.columns(2)

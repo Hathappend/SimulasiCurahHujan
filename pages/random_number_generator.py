@@ -8,6 +8,9 @@ import numpy as np
 if 'cookies' not in st.session_state:
     st.session_state['cookies'] = {}
 
+if 'guest' not in st.session_state:
+    st.session_state.guest = {}
+
 # Inisialisasi CookieController
 controller = CookieController()
 localS = LocalStorage()
@@ -63,23 +66,21 @@ def main():
 
     frequency_table = controller.get('Frequency Table')
 
-    ready = False
-    for key in list(frequency_table.keys()):
-        print(key)
-        if controller.get(key):
-            ready = True
-        else:
-            ready = False
-            break
-    
-    if ready:        
-        st.info("Angka acak sudah di siapkan")
-
-    # st.write(localS.getAll())
-
-
     selected_column = None
     if frequency_table:
+
+        ready = False
+        for key in list(frequency_table.keys()):
+            print(key)
+            if controller.get(key):
+                ready = True
+            else:
+                ready = False
+                break
+        
+        if ready:        
+            st.info("Angka acak sudah di siapkan")
+
         st.subheader("Generate berdasarkan: ")
         
         # Pilihan kolom dalam select box

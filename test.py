@@ -2,15 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-
-def init():
-
-    #Inisialisasi session
-    if 'frequency_tables' not in st.session_state:
-        st.session_state['frequency_tables'] = {}
-    # for key in st.session_state['frequency_tables'].keys():
-    #     st.session_state[f'{key}_random_numbers'] = {}
-
+#Inisialisasi session
+if 'frequency_tables' not in st.session_state:
+    st.session_state.frequency_tables = {}
 
 # Fungsi untuk menghitung tabel frekuensi
 def calculate_frequency_table(data, column_names):
@@ -77,15 +71,9 @@ def show(data, show_type):
         elif show_type == "rng":
             st.write(f'Tabel Angka Acak untuk {column} dengan parameter:')
             # st.dataframe(controller.get(column))
-            session_key = f"{column}_random_numbers"
-            if session_key in st.session_state:
-                st.dataframe(st.session_state[session_key], width=700)
+            # st.dataframe(localS.getItem(column), width=700)
 
 def main():
-
-
-    #inisialisasi
-    init()
 
     st.title("File Upload dan Tabel Frekuensi")
 
@@ -94,6 +82,7 @@ def main():
 
     # Menampilkan data (Tabel Frekuensi) yang disimpan dalam cookie jika ada
     saved_frequency_tables = st.session_state["frequency_tables"]
+    print(st.session_state["frequency_tables"].keys())
     if saved_frequency_tables:
         st.file_uploader("Upload file CSV atau Excel", type=["csv", "xlsx"], accept_multiple_files=False, disabled=True)
         st.write("Data telah di siapkan")
@@ -103,21 +92,18 @@ def main():
             show(saved_frequency_tables, "probability")
         with st.expander("Tabel Interval Angka Acak"):
             show(saved_frequency_tables, "interval")
-        with st.expander("Tabel Angka Acak"):
-            
-            find = False
-            for key in list(st.session_state['frequency_tables'].keys()):
-                session_key = f"{key}_random_numbers"
-                if session_key in st.session_state and st.session_state[session_key]:
-                    find = True
-                else:
-                    find = False
-                    st.warning(f'Angka acak belum lengkap, dibutuhkan angka acak "{key}" ')
-                    break
+        # with st.expander("Tabel Angka Acak"):
+        #     find = False
+        #     for key in list(saved_frequency_tables.keys()):
+        #         if controller.get(key):
+        #             find = True
+        #         else:
+        #             find = False
+        #             st.warning(f'Angka acak belum lengkap, dibutuhkan angka acak "{key}" ')
+        #             break
 
-            if find:    
-                # Panggil fungsi untuk menampilkan tabel angka acak
-                show(st.session_state['frequency_tables'], "rng")
+        #     if find:    
+        #         show(saved_frequency_tables, "rng")
             
     else:
         uploadedFile = st.file_uploader("Upload file CSV atau Excel", type=["csv", "xlsx"], accept_multiple_files=False)

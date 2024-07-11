@@ -1,6 +1,6 @@
 # 🎈 Simulasi Intensitas Curah Hujan menggunakan metode Monte Carlo
 
-[![Open simulation](https://kelompok-10-simulasi-curah-hujan.streamlit.app/)
+[![Open simulation](https://kelompok-10-simulasi-curah-hujan.streamlit.app/)]
 
 ### How to run it on your own machine
 

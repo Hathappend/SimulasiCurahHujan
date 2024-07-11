@@ -1,5 +1,4 @@
 import streamlit as st
-import importlib
 import pages.requirements_step as requirements_step
 import pages.random_number_generator as rng
 import pages.simulasi as simulasi
@@ -8,16 +7,14 @@ st.set_page_config(layout="wide")
 
 def main():
 
+    #inisialisasi session
     if "frequency_tables" not in st.session_state:
         st.session_state['frequency_tables'] = {}
-        
-    # for key in st.session_state['frequency_tables'].keys():
-    #     st.session_state[f'{key}_random_numbers'] = {}
 
-    #initialisasi session
     if 'guest' not in st.session_state:
         st.session_state.guest = {}
 
+    # tampilan sidebar
     st.sidebar.title("Model Dan Simulasi")
     selected_tab = st.sidebar.radio("Menu", ["Tahap Persiapan","Generator Bilangan Acak","Simulasi"])
 

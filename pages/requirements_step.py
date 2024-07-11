@@ -8,8 +8,6 @@ def init():
     #Inisialisasi session
     if 'frequency_tables' not in st.session_state:
         st.session_state['frequency_tables'] = {}
-    # for key in st.session_state['frequency_tables'].keys():
-    #     st.session_state[f'{key}_random_numbers'] = {}
 
 
 # Fungsi untuk menghitung tabel frekuensi
@@ -21,6 +19,7 @@ def calculate_frequency_table(data, column_names):
         frequency_tables[column] = frequency_table
     return frequency_tables
 
+#mencari probabilitas
 def probabilitas(dataFrekuensi):
     df_frekuensi = pd.DataFrame(dataFrekuensi)
     total_frekuensi = df_frekuensi['Frekuensi'].sum()
@@ -29,6 +28,7 @@ def probabilitas(dataFrekuensi):
    
     return df_frekuensi
 
+#mencari interval angka acak
 def kemunculanAngkaAcak(dataFrekuensi):
     df_frekuensi = pd.DataFrame(dataFrekuensi)
     total_frekuensi = df_frekuensi['Frekuensi'].sum()
@@ -63,7 +63,7 @@ def save(frequency_tables):
         saved_frequency[column] = frequency_table
     st.session_state["frequency_tables"] = saved_frequency
 
-
+#dungsi untuk menampilkan data
 def show(data, show_type):
     columns = st.columns(2)
     for i, (column, frequency_table) in enumerate(data.items()):
@@ -76,13 +76,18 @@ def show(data, show_type):
             st.dataframe(kemunculanAngkaAcak(frequency_table), hide_index=True)
         elif show_type == "rng":
             st.write(f'Tabel Angka Acak untuk {column} dengan parameter:')
-            # st.dataframe(controller.get(column))
+
+            # menampilkan parameter angka acak
+            session_key_param = f"{column}_random_numbers_params"
+            if session_key_param in st.session_state:
+                st.dataframe(st.session_state[session_key_param], hide_index=True)
+
+            # menampilkan angka acak
             session_key = f"{column}_random_numbers"
             if session_key in st.session_state:
-                st.dataframe(st.session_state[session_key], width=700)
+                st.dataframe(st.session_state[session_key], width=700, hide_index=True)
 
 def main():
-
 
     #inisialisasi
     init()
@@ -105,6 +110,7 @@ def main():
             show(saved_frequency_tables, "interval")
         with st.expander("Tabel Angka Acak"):
             
+            #validasi jika frekuensi tabel telah disimpan atau belum
             find = False
             for key in list(st.session_state['frequency_tables'].keys()):
                 session_key = f"{key}_random_numbers"
@@ -123,6 +129,9 @@ def main():
         uploadedFile = st.file_uploader("Upload file CSV atau Excel", type=["csv", "xlsx"], accept_multiple_files=False)
             
         
+    #
+    # Menampilakn hasil data
+    #
 
     data = uploaded_file(uploadedFile)
     if data is not None:
@@ -132,6 +141,7 @@ def main():
         # Pilih kolom untuk perhitungan tabel frekuensi
         column_names = st.multiselect("Pilih kolom untuk perhitungan tabel frekuensi", data.columns)
 
+        #menghitung tabel frekuensi
         if column_names:
             frequency_tables = calculate_frequency_table(data, column_names)
             show(frequency_tables, "frequency")
@@ -149,5 +159,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

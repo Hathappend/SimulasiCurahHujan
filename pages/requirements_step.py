@@ -92,7 +92,7 @@ def main():
     #inisialisasi
     init()
 
-    st.title("File Upload dan Tabel Frekuensi")
+    st.title("Tahap Persiapan Simulasi Curah Hujan")
 
     # Upload file
     uploadedFile = None
@@ -101,7 +101,23 @@ def main():
     saved_frequency_tables = st.session_state["frequency_tables"]
     if saved_frequency_tables:
         st.file_uploader("Upload file CSV atau Excel", type=["csv", "xlsx"], accept_multiple_files=False, disabled=True)
-        st.write("Data telah di siapkan")
+
+        #validasi jika frekuensi tabel telah disimpan atau belum
+        find = False
+        for key in list(st.session_state['frequency_tables'].keys()):
+            session_key = f"{key}_random_numbers"
+            if session_key in st.session_state and st.session_state[session_key]:
+                find = True
+            else:
+                find = False
+                break
+        
+        #info jika data angka acak sudah disiapkan atau belum
+        if find:
+            st.info("Data sudah selesai disiapkan, waktunya simulasi..")
+        else:
+            st.warning("Data angka acak belum selesai disiapkan")
+
         with st.expander("Tabel Frekuensi"):
             show(saved_frequency_tables, "frequency")
         with st.expander("Tabel Probabilitas"):
@@ -110,20 +126,11 @@ def main():
             show(saved_frequency_tables, "interval")
         with st.expander("Tabel Angka Acak"):
             
-            #validasi jika frekuensi tabel telah disimpan atau belum
-            find = False
-            for key in list(st.session_state['frequency_tables'].keys()):
-                session_key = f"{key}_random_numbers"
-                if session_key in st.session_state and st.session_state[session_key]:
-                    find = True
-                else:
-                    find = False
-                    st.warning(f'Angka acak belum lengkap, dibutuhkan angka acak "{key}" ')
-                    break
-
             if find:    
                 # Panggil fungsi untuk menampilkan tabel angka acak
                 show(st.session_state['frequency_tables'], "rng")
+            else:
+                st.warning(f'Angka acak belum lengkap, dibutuhkan angka acak "{key}" ')
             
     else:
         uploadedFile = st.file_uploader("Upload file CSV atau Excel", type=["csv", "xlsx"], accept_multiple_files=False)

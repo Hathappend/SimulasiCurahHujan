@@ -106,7 +106,7 @@ def main():
     if selected_column:
         key = f"{selected_column}_random_numbers"
         if key in st.session_state:
-            st.dataframe(pd.DataFrame(st.session_state[key]), width=700)
+            st.dataframe(pd.DataFrame(st.session_state[key]), hide_index=True, width=700)
 
 if __name__ == "__main__":
     main()
